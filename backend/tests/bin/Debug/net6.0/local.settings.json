@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "AzureResumeConnectionString": "AccountEndpoint=https://olamide-azure-resume.documents.azure.com:443/;AccountKey=N0mtcWIDqysFN0Nm1inkd0MUQKyyJg6UhgXlyuXNSLUSzev9fOqE9Aesc4Cd6aiGexQKzuq1imBSdnh5zByp2w==;"
+  },
+  "Host": 
+  {
+    "CORS":"*"
+  }
+}

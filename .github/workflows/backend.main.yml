@@ -1,0 +1,48 @@
+name: deploy_backend
+
+on:
+  push:
+      branches: [main]
+      paths: 
+      - 'backend/**'
+
+
+env:
+  AZURE_FUNCTIONAPP_NAME: GetResume-Counter  # function app name
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'backend'    # path to the web app project
+  DOTNET_VERSION: '6.0.302'              # dotnet version to use
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v2
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: 'Resolve Project Dependencies Using Dotnet'
+      shell: bash
+      run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/api'
+        dotnet build --configuration Release --output ./output
+        popd
+    - name: 'Run unit test'
+      shell: bash
+      run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/tests'
+        dotnet test
+        popd
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/api/output'
